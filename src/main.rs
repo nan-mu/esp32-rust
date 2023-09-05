@@ -1,4 +1,5 @@
 use clap::Parser;
+use csscolorparser;
 use std::io::{Result, Write};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpStream};
 
@@ -6,9 +7,11 @@ use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpStream};
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// send messege
+    color: Option<String>,
+
+    /// send messege directly (for debug)
     #[arg(short, long)]
-    msg: String,
+    msg: Option<String>,
 
     // config server ip addr, should include port such as 127.0.0.1:8080
     #[arg(short, long)]
@@ -24,14 +27,30 @@ fn tcp_client(req: &str, addr: &SocketAddr) -> Result<()> {
 }
 
 fn main() {
-    let default_ipaddr = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080);
     let args = Args::parse();
     let ipaddr;
     match args.ipaddr {
         // 设置自定义ip或默认ip
-        None => ipaddr = default_ipaddr,
+        None => ipaddr = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080),
         Some(x) => ipaddr = x.parse().expect("错误的ip格式"),
+    };
+    match args.msg {
+        // 这里是为了学习命令行参数的输入和快捷调试tcp服务
+        Some(msg) => {
+            tcp_client(&msg, &ipaddr).expect("连接未正常退出");
+            println!("send {}!", msg);
+        }
+        None => (),
+    };
+    match args.color {
+        Some(def_color) => {
+            let color = csscolorparser::parse(&def_color).expect("错误的颜色格式");
+            let out_style_color = format!(
+                "{{\"put\": RGB,\"R\":{:03},\"G\":{:03},\"B\"{:03}}}",
+                color.r, color.g, color.b
+            );
+            tcp_client(&out_style_color, &ipaddr).expect("连接未正常退出");
+        }
+        None => (),
     }
-    tcp_client(&args.msg, &ipaddr).expect("连接未正常退出");
-    println!("send {}!", args.msg);
 }

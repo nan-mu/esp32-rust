@@ -2,11 +2,12 @@
 name = "esp32-rust"
 version = "0.1.0"
 edition = "2021"
-about = "If the server address is not set, it's should be 127.0.0.1:8080 defaultly."
+# about = "If the server address is not set, it's should be 127.0.0.1:8080 defaultly."
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 clap = { version = "4.4.2", features = ["derive"] }
+csscolorparser = "0.6.2"
 serial = "0.4.0"
 wifi-rs = "0.2.2"
