@@ -1,11 +1,14 @@
 use std::io::{Result, Write};
-use std::net::{self, Ipv4Addr, TcpStream};
+use std::net::{Ipv4Addr, SocketAddrV4, TcpStream};
 
-fn tcp_client(&str: req, Ipv4Addr: addr) -> Result<()> {
-    let client = TcpStream::connect(addr).expect("无法连接目标服务器");
-    client.write_all(req);
+fn tcp_client(req: &str, addr: &SocketAddrV4) -> Result<()> {
+    let mut client = TcpStream::connect(addr).unwrap();
+    client.write_all(req.as_bytes())?;
+    Ok(())
 }
 
 fn main() {
-    tcp_client(_, Ipv4Addr);
+    let default_ipaddr = SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080);
+
+    tcp_client("Connect meg", &default_ipaddr).expect("连接未正常退出");
 }
