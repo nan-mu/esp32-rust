@@ -1,5 +1,5 @@
 [package]
-name = "esp32-rust"
+name = "tcplight"
 version = "0.1.0"
 edition = "2021"
 # about = "If the server address is not set, it's should be 127.0.0.1:8080 defaultly."
@@ -9,5 +9,10 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.4.2", features = ["derive"] }
 csscolorparser = "0.6.2"
-serial = "0.4.0"
-wifi-rs = "0.2.2"
+
+[profile.release]
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = 'abort'
+std = { default-features = false, features = ["panic_immediate_abort"] }
