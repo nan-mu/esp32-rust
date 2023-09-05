@@ -47,7 +47,9 @@ fn main() {
             let color = csscolorparser::parse(&def_color).expect("错误的颜色格式");
             let out_style_color = format!(
                 "{{\"put\": RGB,\"R\":{:03},\"G\":{:03},\"B\"{:03}}}",
-                color.r, color.g, color.b
+                (color.r * 255.0) as u8,
+                (color.g * 255.0) as u8,
+                (color.b * 255.0) as u8
             );
             tcp_client(&out_style_color, &ipaddr).expect("连接未正常退出");
         }
